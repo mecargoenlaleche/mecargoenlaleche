@@ -40,8 +40,7 @@ sd = sd[['Data','Hora','C/P','Operador','Voo', 'Aeronave','Origem/Destino','Esca
 sd = sd.sort_values(['Data','Hora'],ascending=[True,True])
 oje = sd['Data'].iloc[0]
 
-#image_path = 'assets/gru_logo.jpg'
-image_path = 'gru_logo.jpg'
+image_path = 'assets/gru_logo.png'
 
 app = Dash(__name__)
 server = app.server
