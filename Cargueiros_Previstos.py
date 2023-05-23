@@ -7,6 +7,7 @@ from dash import Dash, dash_table, dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
 from datetime import timedelta
+import base64
 
 sd = pd.read_csv('Live_GRU_S23-SD.TXT', dtype='unicode', skiprows=1, usecols=[0,1,2,3,4,6,8,9,10,11])
 sd = sd[sd['Serv.type'].isin(['M', 'F', 'H', 'A'])]
@@ -40,7 +41,8 @@ sd = sd[['Data','Hora','C/P','Operador','Voo', 'Aeronave','Origem/Destino','Esca
 sd = sd.sort_values(['Data','Hora'],ascending=[True,True])
 oje = sd['Data'].iloc[0]
 
-image_path = 'assets/gru_logo.png'
+image_path = 'assets/gru_logo.jpg'
+encoded_image = base64.b64encode(open(image_path, 'rb').read())
 
 app = Dash(__name__)
 server = app.server
@@ -49,7 +51,7 @@ dias = sd.Data.unique().tolist()
 
 app.layout = html.Div(
     [
-        html.Img(src=image_path,style={'float':'right'}),
+        html.Img(src='data:image/png;base64,{}'.format(image_path),style={'float':'right'}),
         html.H1('VOOS CARGUEIROS PREVISTOS', style={'font-family':'verdana'}),
         html.Div(children='''
             Previsão das operações cargueiras com slot alocado para os próximos 7 dias
