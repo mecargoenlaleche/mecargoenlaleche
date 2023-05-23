@@ -43,6 +43,7 @@ oje = sd['Data'].iloc[0]
 image_path = 'assets/gru_logo.jpg'
 
 app = Dash(__name__)
+sever = app.server
 PAGE_SIZE = 13
 dias = sd.Data.unique().tolist()
 
