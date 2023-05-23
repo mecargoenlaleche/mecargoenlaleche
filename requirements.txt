@@ -3,4 +3,4 @@ pandas
 datetime
 openpyxl
 gunicorn
-base64
+pybase64
