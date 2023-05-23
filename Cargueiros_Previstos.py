@@ -8,7 +8,7 @@ from dash.dependencies import Input, Output
 import pandas as pd
 from datetime import timedelta
 
-sd = pd.read_csv(kminho+'Live_GRU_S23-SD.TXT', dtype='unicode', skiprows=1, usecols=[0,1,2,3,4,6,8,9,10,11])
+sd = pd.read_csv('Live_GRU_S23-SD.TXT', dtype='unicode', skiprows=1, usecols=[0,1,2,3,4,6,8,9,10,11])
 sd = sd[sd['Serv.type'].isin(['M', 'F', 'H', 'A'])]
 sd['Serv.type'] = sd['Serv.type'].replace({'M':'Correios','F':'Regular Cargo', 'H':'Extra Cargo', 'A':'Mix Cargo/Pax'})
 sd['Term'] = sd['Term'].replace({'CARGO-INT':'Internacional', 'CARGO-DOM':'Doméstico'})
@@ -24,11 +24,11 @@ sd = sd[(sd['Date']>=oggi) & (sd['Date']<=sem_irmã)]
 sd['Data'] = sd['Date'].dt.strftime('%d/%m/%Y')
 sd = sd.drop(['Date','Time'],axis=1)
 
-orig = pd.read_excel(uei+'referências.xlsx', sheet_name = 'destinos', usecols=[0,2])
+orig = pd.read_excel('referências.xlsx', sheet_name = 'destinos', usecols=[0,2])
 orig = orig.rename(columns={'IATA': 'OrigDest', 'DESTINO': 'Origem/Destino'})
-last = pd.read_excel(uei+'referências.xlsx', sheet_name = 'destinos', usecols=[0,2])
+last = pd.read_excel('referências.xlsx', sheet_name = 'destinos', usecols=[0,2])
 last = last.rename(columns={'IATA': 'LastNext', 'DESTINO': 'Escala'})
-opes = pd.read_excel(uei+'referências.xlsx', sheet_name = 'operador',usecols = [0,1])
+opes = pd.read_excel('referências.xlsx', sheet_name = 'operador',usecols = [0,1])
 opes = opes.rename(columns={'Iata Code': 'Airl.Desig', 'OPERADOR': 'Operador'})
 
 sd = pd.merge(sd, orig, how = 'inner', on = 'OrigDest')
