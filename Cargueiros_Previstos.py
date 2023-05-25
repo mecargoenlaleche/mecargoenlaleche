@@ -41,7 +41,7 @@ sd = sd[['Data','Hora','C/P','Operador','Voo', 'Aeronave','Origem/Destino','Esca
 sd = sd.sort_values(['Data','Hora'],ascending=[True,True])
 oje = sd['Data'].iloc[0]
 
-image_path = 'assets/gru_logo.png'
+image_path = 'assets/gru_logo.jpg'
 encoded_image = base64.b64encode(open(image_path, 'rb').read())
 
 app = Dash(__name__)
@@ -51,7 +51,7 @@ dias = sd.Data.unique().tolist()
 
 app.layout = html.Div(
     [
-        html.Img(src='data:image/png;base64,{}'.format(image_path),style={'float':'right'}),
+        html.Img(src='data:image/jpg;base64,{}'.format(image_path),style={'float':'right'}),
         html.H1('VOOS CARGUEIROS PREVISTOS', style={'font-family':'verdana'}),
         html.Div(children='''
             Previsão das operações cargueiras com slot alocado para os próximos 7 dias
