@@ -51,7 +51,7 @@ dias = sd.Data.unique().tolist()
 
 app.layout = html.Div(
     [
-        html.Img(src='data:image/JPG;base64,{}'.format(image_path),style={'float':'right'}),
+        html.Img(src='data:image/jpg;base64,{}'.format(image_path),style={'float':'right'}),
         html.H1('VOOS CARGUEIROS PREVISTOS', style={'font-family':'verdana'}),
         html.Div(children='''
             Previsão das operações cargueiras com slot alocado para os próximos 7 dias
