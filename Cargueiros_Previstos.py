@@ -14,16 +14,14 @@ sd = sd[sd['Serv.type'].isin(['M', 'F', 'H', 'A'])]
 sd['Serv.type'] = sd['Serv.type'].replace({'M':'Correios','F':'Regular Cargo', 'H':'Extra Cargo', 'A':'Mix Cargo/Pax'})
 sd['Term'] = sd['Term'].replace({'CARGO-INT':'Internacional', 'CARGO-DOM':'Doméstico'})
 sd['ArrDep'] = sd['ArrDep'].replace({'A':'Chegadas', 'D':'Partidas'})
-sd['Date'] = pd.to_datetime(sd['Date'])
-sd['Data'] = sd['Date'].dt.strftime('%d/%m/%Y')
+sd['Date'] = pd.to_datetime(sd['Date'], dayfirst=True)
 sd['Hora']= sd.Time = sd.Time.str[:2] + ':' + sd.Time.str[-2:]
-sd = sd.sort_values(['Date','Hora'],ascending=[True,True]) 
 sd = sd.rename(columns={'Serv.type': 'Serviço', 'Term': 'Natureza','ArrDep':'C/P','Actyp':'Aeronave'})
 oggi = pd.to_datetime('today').normalize()
 sem_irmã = oggi + timedelta(days=7)
 sd = sd[(sd['Date']>=oggi) & (sd['Date']<=sem_irmã)]
+sd = sd.sort_values(['Date','Hora'],ascending=[True,True])
 sd['Data'] = sd['Date'].dt.strftime('%d/%m/%Y')
-sd = sd.drop(['Date','Time'],axis=1)
 
 orig = pd.read_excel('referências.xlsx', sheet_name = 'destinos', usecols=[0,2])
 orig = orig.rename(columns={'IATA': 'OrigDest', 'DESTINO': 'Origem/Destino'})
@@ -36,9 +34,9 @@ sd = pd.merge(sd, orig, how = 'inner', on = 'OrigDest')
 sd = pd.merge(sd, last, how = 'inner', on = 'LastNext')
 sd = pd.merge(sd, opes, how = 'inner', on = 'Airl.Desig')
 sd['Voo'] = sd['Airl.Desig']+sd['Fltno']
-sd = sd.drop(['Airl.Desig', 'Fltno','OrigDest', 'LastNext'], axis=1)
+sd = sd.drop(['Time','Airl.Desig', 'Fltno','OrigDest', 'LastNext'], axis=1)
+sd = sd.sort_values(['Date','Hora'],ascending=[True,True])
 sd = sd[['Data','Hora','C/P','Operador','Voo', 'Aeronave','Origem/Destino','Escala', 'Serviço','Natureza']]
-sd = sd.sort_values(['Data','Hora'],ascending=[True,True])
 oje = sd['Data'].iloc[0]
 
 image_path = r'\assets\gru_logo.png'
@@ -46,7 +44,7 @@ image_path = r'\assets\gru_logo.png'
 
 app = Dash(__name__)
 server = app.server
-PAGE_SIZE = 13
+PAGE_SIZE = 15
 dias = sd.Data.unique().tolist()
 
 app.layout = html.Div(
