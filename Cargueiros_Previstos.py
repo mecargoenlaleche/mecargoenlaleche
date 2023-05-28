@@ -41,7 +41,7 @@ sd = sd[['Data','Hora','C/P','Operador','Voo', 'Aeronave','Origem/Destino','Esca
 sd = sd.sort_values(['Data','Hora'],ascending=[True,True])
 oje = sd['Data'].iloc[0]
 
-image_path = 'gru-img.jpg'
+image_path = '\assets\gru_logo.jpg'
 encoded_image = base64.b64encode(open(image_path, 'rb').read())
 
 app = Dash(__name__)
