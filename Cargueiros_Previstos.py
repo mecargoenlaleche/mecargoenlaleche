@@ -41,7 +41,7 @@ sd = sd[['Data','Hora','C/P','Operador','Voo', 'Aeronave','Origem/Destino','Esca
 sd = sd.sort_values(['Data','Hora'],ascending=[True,True])
 oje = sd['Data'].iloc[0]
 
-image_path = '\assets\gru_logo.jpg'
+image_path = '\\assets\\gru_logo.png'
 encoded_image = base64.b64encode(open(image_path, 'rb').read())
 
 app = Dash(__name__)
@@ -51,7 +51,7 @@ dias = sd.Data.unique().tolist()
 
 app.layout = html.Div(
     [
-        html.Img(src='data:image/jpg;base64,{}'.format(image_path),style={'float':'right'}),
+        html.Img(src='data:image/png;base64,{}'.format(image_path),style={'float':'right'}),
         html.H1('VOOS CARGUEIROS PREVISTOS', style={'font-family':'verdana'}),
         html.Div(children='''
             Previsão das operações cargueiras com slot alocado para os próximos 7 dias
@@ -79,13 +79,13 @@ app.layout = html.Div(
 				options=[{'label':dt, 'value': dt}for dt in dias],
 				placeholder='-Selecione Uma Data-',
 				multi=False,
-                style={"width": "32%"},
+                                style={"width": "32%"},
 				value=oje,
             ),        
 			dash_table.DataTable(
 				id='tafeia',
 				columns=[{"name": i, "id": i} for i in sd.columns],
-                style_data_conditional=[
+                                style_data_conditional=[
                     {
                         'if': {
                             'filter_query': '{C/P} eq "Partidas"'
