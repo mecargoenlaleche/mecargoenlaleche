@@ -43,6 +43,7 @@ image_path = r'\assets\gru_logo.png'
 #encoded_image = base64.b64encode(open(image_path, 'rb').read())
 
 app = Dash(__name__)
+app.title = 'Cargueiros Previstos'
 server = app.server
 PAGE_SIZE = 15
 dias = sd.Data.unique().tolist()
