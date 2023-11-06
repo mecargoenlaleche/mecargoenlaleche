@@ -18,7 +18,7 @@ sd['Date'] = pd.to_datetime(sd['Date'], dayfirst=True)
 sd['Hora']= sd.Time = sd.Time.str[:2] + ':' + sd.Time.str[-2:]
 sd = sd.rename(columns={'Serv.type': 'Serviço', 'Term': 'Natureza','ArrDep':'C/P','Actyp':'Aeronave'})
 oggi = pd.to_datetime('today').normalize()
-sem_irmã = oggi + timedelta(days=7)
+sem_irmã = oggi + timedelta(days=6)
 sd = sd[(sd['Date']>=oggi) & (sd['Date']<=sem_irmã)]
 sd = sd.sort_values(['Date','Hora'],ascending=[True,True])
 sd['Data'] = sd['Date'].dt.strftime('%d/%m/%Y')
