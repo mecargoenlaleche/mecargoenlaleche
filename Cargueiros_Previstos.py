@@ -42,7 +42,7 @@ oje = sd['Data'].iloc[0]
 
 sd['Origem/Destino'] = np.where(sd['Origem/Destino'] == "Guarulhos", sd['Escala'], sd['Origem/Destino'])
 sd['Escala'] = np.where(sd['Escala'] == "Guarulhos", sd['Origem/Destino'], sd['Escala'])
-sd['Escala'] = np.where(sd['Escala'] == sd['Origem/Destino'], sd['Escala'] =="-", sd['Escala'])
+sd['Escala'] = np.where(sd['Escala'] == sd['Origem/Destino'], sd['Escala'] == "-", sd['Escala'])
 
 image_path = r'\assets\gru_logo.png'
 #encoded_image = base64.b64encode(open(image_path, 'rb').read())
@@ -50,7 +50,7 @@ image_path = r'\assets\gru_logo.png'
 app = Dash(__name__)
 app.title = 'Cargueiros Previstos'
 server = app.server
-PAGE_SIZE = 15
+#PAGE_SIZE = 15
 dias = sd.Data.unique().tolist()
 
 app.layout = html.Div(
@@ -101,7 +101,7 @@ app.layout = html.Div(
                                         ],
 				data=sd.to_dict("records"),
                 page_current=0,
-                page_size=PAGE_SIZE,
+                #page_size=PAGE_SIZE,
 				style_cell=dict(textAlign="left",color='white',font_family='verdana'),
 				style_header=dict(backgroundColor='black'),
 				style_data=dict(backgroundColor='#00ABBD'),
