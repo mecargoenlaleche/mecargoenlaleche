@@ -4,3 +4,4 @@ datetime
 openpyxl
 gunicorn
 pybase64
+numpy
