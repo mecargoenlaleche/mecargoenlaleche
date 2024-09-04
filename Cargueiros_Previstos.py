@@ -19,7 +19,7 @@ sd['Date'] = pd.to_datetime(sd['Date'], dayfirst=True)
 sd['Hora']= sd.Time = sd.Time.str[:2] + ':' + sd.Time.str[-2:]
 sd = sd.rename(columns={'Serv.type': 'Serviço', 'Term': 'Natureza','ArrDep':'C/P','Actyp':'Aeronave'})
 oggi = pd.to_datetime('today').normalize()
-sem_irmã = oggi + timedelta(days=6)
+sem_irmã = oggi + timedelta(days=29)
 sd = sd[(sd['Date']>=oggi) & (sd['Date']<=sem_irmã)]
 sd = sd.sort_values(['Date','Hora'],ascending=[True,True])
 sd['Data'] = sd['Date'].dt.strftime('%d/%m/%Y')
@@ -52,7 +52,7 @@ app = Dash(__name__)
 app.title = 'Cargueiros Previstos'
 server = app.server
 #PAGE_SIZE = 15
-dias = sd.Data.unique().tolist()
+dias = sd.Operador.unique().tolist()
 
 app.layout = html.Div(
     [
@@ -72,7 +72,7 @@ app.layout = html.Div(
             ------------------
         '''),
         html.Div(children='''
-            -Selecione Uma Data-
+            -Selecione Um Operador-
         ''', style={'font-family':'verdana'}),
         html.Div(children='''
             ------------------
@@ -83,7 +83,7 @@ app.layout = html.Div(
             dcc.Dropdown(
 				id='selectioneer',
 				options=[{'label':dt, 'value': dt}for dt in dias],
-				placeholder='-Selecione Uma Data-',
+				placeholder='-Selecione Um Operador-',
 				multi=False,
                                 style={"width": "32%"},
 				value=oje,
@@ -115,7 +115,7 @@ app.layout = html.Div(
 )
 def update_table(data):
     if data:
-        sdd = sd[sd['Data']==data]
+        sdd = sd[sd['Operador']==data]
         return sdd.to_dict('records')
     return sd.to_dict('records')
 
