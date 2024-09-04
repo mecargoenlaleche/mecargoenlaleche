@@ -60,7 +60,7 @@ app.layout = html.Div(
 	html.Img(src=image_path,style={'float':'right'}),    
         html.H1('VOOS CARGUEIROS PREVISTOS', style={'font-family':'verdana'}),
         html.Div(children='''
-            Previsão das operações cargueiras com slot alocado para os próximos 7 dias
+            Previsão das operações cargueiras com slot alocado para os próximos 30 dias
         ''', style={'font-family':'verdana'}),
         html.Div(children='''
             Todas as informações são fornecidas previamente pelas companhias aéreas
@@ -83,9 +83,9 @@ app.layout = html.Div(
             dcc.Dropdown(
 				id='selectioneer',
 				options=[{'label':dt, 'value': dt}for dt in dias],
-				placeholder='-Selecione Um Operador-',
+				placeholder='Sel. Operador',
 				multi=False,
-                                style={"width": "32%"},
+                                style={"width": "35%"},
 				value=oje,
             ),        
 			dash_table.DataTable(
