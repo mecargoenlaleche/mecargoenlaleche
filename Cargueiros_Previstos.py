@@ -86,7 +86,7 @@ app.layout = html.Div(
 				placeholder='Sel. Operador',
 				multi=False,
                                 style={"width": "35%"},
-				value=oje,
+				#value=oje,
             ),        
 			dash_table.DataTable(
 				id='tafeia',
