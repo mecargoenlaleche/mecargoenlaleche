@@ -68,9 +68,9 @@ app.layout = html.Div(
         html.Div(children='''
             Dúvidas sobre alterações podem ser esclarecidas diretamente nos canais de atendimento das empresas responsáveis
         ''', style={'font-family':'verdana'}),
-#        html.Div(children='''
-#            ------------------
-#        '''),
+        html.Div(children='''
+            
+        '''),
 #        html.Div(children='''
 #            -Selecione Um Operador-
 #        ''', style={'font-family':'verdana'}),
