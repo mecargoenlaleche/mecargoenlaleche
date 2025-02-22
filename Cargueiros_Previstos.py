@@ -52,7 +52,7 @@ app = Dash(__name__)
 app.title = 'Cargueiros Previstos'
 server = app.server
 #PAGE_SIZE = 15
-dias = sd.Operador.unique().tolist()
+#dias = sd.Operador.unique().tolist()
 
 app.layout = html.Div(
     [
@@ -68,26 +68,26 @@ app.layout = html.Div(
         html.Div(children='''
             Dúvidas sobre alterações podem ser esclarecidas diretamente nos canais de atendimento das empresas responsáveis
         ''', style={'font-family':'verdana'}),
-        html.Div(children='''
-            ------------------
-        '''),
-        html.Div(children='''
-            -Selecione Um Operador-
-        ''', style={'font-family':'verdana'}),
-        html.Div(children='''
-            ------------------
-        '''),
+#        html.Div(children='''
+#            ------------------
+#        '''),
+#        html.Div(children='''
+#            -Selecione Um Operador-
+#        ''', style={'font-family':'verdana'}),
+#        html.Div(children='''
+#            ------------------
+#        '''),
         
         html.Div(
         children=[
-            dcc.Dropdown(
-				id='selectioneer',
-				options=[{'label':dt, 'value': dt}for dt in dias],
-				placeholder='Sel. Operador',
-				multi=False,
-                                style={"width": "35%"},
-				#value=oje,
-            ),        
+#            dcc.Dropdown(
+#				id='selectioneer',
+#				options=[{'label':dt, 'value': dt}for dt in dias],
+#				placeholder='Sel. Operador',
+#				multi=False,
+#                                style={"width": "35%"},
+#				#value=oje,
+#            ),        
 			dash_table.DataTable(
 				id='tafeia',
 				columns=[{"name": i, "id": i} for i in sd.columns],
@@ -100,6 +100,8 @@ app.layout = html.Div(
                         'color': 'white'
                     },
                                         ],
+				filter_action="native",
+				filter_options={"placeholder_text": "Filtrar Valor"},
 				data=sd.to_dict("records"),
                 page_current=0,
                 #page_size=PAGE_SIZE,
