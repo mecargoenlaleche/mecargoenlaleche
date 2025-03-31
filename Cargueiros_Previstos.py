@@ -10,7 +10,7 @@ from datetime import timedelta
 import base64
 import numpy as np
 
-sd = pd.read_csv('Live_GRU_W24-SD.txt', dtype='unicode', skiprows=1, usecols=[0,1,2,3,4,6,8,9,10,11])
+sd = pd.read_csv('Live_GRU_S25-SD.txt', dtype='unicode', skiprows=1, usecols=[0,1,2,3,4,6,8,9,10,11])
 sd = sd[sd['Serv.type'].isin(['M', 'F', 'H', 'A'])]
 sd['Serv.type'] = sd['Serv.type'].replace({'M':'Correios','F':'Regular Cargo', 'H':'Extra Cargo', 'A':'Mix Cargo/Pax'})
 sd['Term'] = sd['Term'].replace({'CARGO-INT':'Internacional', 'CARGO-DOM':'Doméstico'})
