@@ -52,78 +52,283 @@ image_path = r'\assets\gru_logo.png'
 app = Dash(__name__)
 app.title = 'Cargueiros Previstos'
 server = app.server
-#PAGE_SIZE = 15
-#dias = sd.Operador.unique().tolist()
+
+# Datas auxiliares para filtrar sem comparar textos em DD/MM/AAAA.
+datas_voos = pd.to_datetime(
+    sd['Data'], format='%d/%m/%Y', errors='coerce'
+)
+
+operadores = sorted(sd['Operador'].dropna().unique().tolist())
+
+estilo_campo = {
+    'flex': '1 1 260px',
+    'minWidth': '260px'
+}
+
+estilo_rotulo = {
+    'display': 'block',
+    'marginBottom': '8px',
+    'fontWeight': 'bold',
+    'fontSize': '13px'
+}
 
 app.layout = html.Div(
     [
-        #html.Img(src='data:image/png;base64,{}'.format(image_path),style={'float':'right'}),
-	html.Img(src=image_path,style={'float':'right'}),    
-        html.H1('VOOS CARGUEIROS PREVISTOS', style={'font-family':'verdana'}),
-        html.Div(children='''
-            Previsão das operações cargueiras com slot alocado para os próximos 30 dias
-        ''', style={'font-family':'verdana'}),
-        html.Div(children='''
-            Todas as informações são fornecidas previamente pelas companhias aéreas
-        ''', style={'font-family':'verdana'}),
-        html.Div(children='''
-            Dúvidas sobre alterações podem ser esclarecidas diretamente nos canais de atendimento das empresas responsáveis
-        ''', style={'font-family':'verdana'}),
-        html.Div(children='''
-            
-        '''),
-#        html.Div(children='''
-#            -Selecione Um Operador-
-#        ''', style={'font-family':'verdana'}),
-#        html.Div(children='''
-#            ------------------
-#        '''),
-        
+        html.Img(
+            src=app.get_asset_url('gru_logo.png'),
+            style={
+                'float': 'right',
+                'maxWidth': '180px',
+                'marginLeft': '20px'
+            }
+        ),
+
+        html.H1(
+            'VOOS CARGUEIROS PREVISTOS',
+            style={'fontSize': '26px'}
+        ),
+
         html.Div(
-        children=[
-#            dcc.Dropdown(
-#				id='selectioneer',
-#				options=[{'label':dt, 'value': dt}for dt in dias],
-#				placeholder='Sel. Operador',
-#				multi=False,
-#                                style={"width": "35%"},
-#				#value=oje,
-#            ),        
-			dash_table.DataTable(
-				id='tafeia',
-				columns=[{"name": i, "id": i} for i in sd.columns],
-                                style_data_conditional=[
-                    {
-                        'if': {
-                            'filter_query': '{C/P} eq "Partidas"'
-                        },
-                        'backgroundColor': '#00919A',
-                        'color': 'white'
+            [
+                html.P(
+                    'Previsão das operações cargueiras com slot '
+                    'alocado para os próximos 30 dias'
+                ),
+                html.P(
+                    'Todas as informações são fornecidas previamente '
+                    'pelas companhias aéreas'
+                ),
+                html.P(
+                    'Dúvidas sobre alterações podem ser esclarecidas '
+                    'diretamente nos canais de atendimento das '
+                    'empresas responsáveis'
+                ),
+            ],
+            style={
+                'fontSize': '13px',
+                'lineHeight': '1.6',
+                'marginBottom': '30px'
+            }
+        ),
+
+        # Área de filtros
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Label('Período', style=estilo_rotulo),
+
+                        dcc.DatePickerRange(
+                            id='filtro-periodo',
+                            min_date_allowed=oggi.date(),
+                            max_date_allowed=sem_irmã.date(),
+                            initial_visible_month=oggi.date(),
+                            start_date=oggi.date(),
+                            end_date=sem_irmã.date(),
+                            display_format='DD/MM/YYYY',
+                            month_format='MM/YYYY',
+                            start_date_placeholder_text='Data inicial',
+                            end_date_placeholder_text='Data final',
+                            minimum_nights=0,
+                            first_day_of_week=1,
+                            clearable=True
+                        ),
+                    ],
+                    style=estilo_campo
+                ),
+
+                html.Div(
+                    [
+                        html.Label('Operador', style=estilo_rotulo),
+
+                        dcc.Dropdown(
+                            id='filtro-operador',
+                            options=[
+                                {'label': op, 'value': op}
+                                for op in operadores
+                            ],
+                            multi=True,
+                            searchable=True,
+                            clearable=True,
+                            placeholder='Todos os operadores'
+                        ),
+                    ],
+                    style=estilo_campo
+                ),
+
+                html.Div(
+                    [
+                        html.Label('Movimento', style=estilo_rotulo),
+
+                        dcc.Dropdown(
+                            id='filtro-movimento',
+                            options=[
+                                {
+                                    'label': 'Chegadas',
+                                    'value': 'Chegadas'
+                                },
+                                {
+                                    'label': 'Partidas',
+                                    'value': 'Partidas'
+                                },
+                            ],
+                            multi=True,
+                            clearable=True,
+                            placeholder='Chegadas e partidas'
+                        ),
+                    ],
+                    style=estilo_campo
+                ),
+            ],
+            style={
+                'display': 'flex',
+                'flexWrap': 'wrap',
+                'gap': '20px',
+                'padding': '20px',
+                'backgroundColor': '#EAF7F7',
+                'borderRadius': '8px',
+                'marginBottom': '20px',
+                'clear': 'both'
+            }
+        ),
+
+        html.Div(
+            id='resumo-filtros',
+            style={
+                'marginBottom': '12px',
+                'fontSize': '13px',
+                'fontWeight': 'bold',
+                'color': '#006E73'
+            }
+        ),
+
+        dash_table.DataTable(
+            id='tafeia',
+            columns=[
+                {'name': coluna, 'id': coluna}
+                for coluna in sd.columns
+            ],
+            data=sd.to_dict('records'),
+
+            filter_action='native',
+            filter_options={
+                'placeholder_text': 'Filtrar valor'
+            },
+
+            sort_action='native',
+            sort_mode='multi',
+
+            page_action='native',
+            page_current=0,
+            page_size=25,
+
+            style_table={
+                'overflowX': 'auto'
+            },
+
+            style_cell={
+                'textAlign': 'left',
+                'color': 'white',
+                'fontFamily': 'Verdana',
+                'fontSize': '12px',
+                'padding': '10px',
+                'minWidth': '90px',
+                'maxWidth': '240px',
+                'whiteSpace': 'normal'
+            },
+
+            style_header={
+                'backgroundColor': '#17383B',
+                'color': 'white',
+                'fontWeight': 'bold'
+            },
+
+            style_filter={
+                'backgroundColor': '#F1F7F7',
+                'color': '#222'
+            },
+
+            style_data={
+                'backgroundColor': '#00ABBD'
+            },
+
+            style_data_conditional=[
+                {
+                    'if': {
+                        'filter_query': '{C/P} eq "Partidas"'
                     },
-                                        ],
-				filter_action="native",
-				filter_options={"placeholder_text": "Filtrar Valor"},
-				data=sd.to_dict("records"),
-                page_current=0,
-                #page_size=PAGE_SIZE,
-				style_cell=dict(textAlign="left",color='white',font_family='verdana'),
-				style_header=dict(backgroundColor='black'),
-				style_data=dict(backgroundColor='#00ABBD'),
-            ),],
-			),])
+                    'backgroundColor': '#00919A',
+                    'color': 'white'
+                }
+            ],
+        ),
+    ],
+    style={
+        'fontFamily': 'Verdana',
+        'padding': '24px',
+        'color': '#243638'
+    }
+)
+
 
 @app.callback(
-    Output("tafeia", "data"), 
-    Input("selectioneer", "value")
+    Output('tafeia', 'data'),
+    Output('tafeia', 'page_current'),
+    Input('filtro-periodo', 'start_date'),
+    Input('filtro-periodo', 'end_date'),
+    Input('filtro-operador', 'value'),
+    Input('filtro-movimento', 'value'),
 )
-def update_table(data):
-    if data:
-        sdd = sd[sd['Operador']==data]
-        return sdd.to_dict('records')
-    return sd.to_dict('records')
+def atualizar_tabela(data_inicial, data_final, operadores, movimentos):
+    mascara = pd.Series(True, index=sd.index)
+
+    if data_inicial:
+        mascara &= datas_voos >= pd.Timestamp(data_inicial).normalize()
+
+    if data_final:
+        mascara &= datas_voos <= pd.Timestamp(data_final).normalize()
+
+    if operadores:
+        mascara &= sd['Operador'].isin(operadores)
+
+    if movimentos:
+        mascara &= sd['C/P'].isin(movimentos)
+
+    filtrado = sd.loc[mascara]
+
+    # Volta à primeira página sempre que um filtro externo mudar.
+    return filtrado.to_dict('records'), 0
 
 
-if __name__ == "__main__":
-    app.run_server()
+@app.callback(
+    Output('resumo-filtros', 'children'),
+    Input('tafeia', 'derived_virtual_data'),
+)
+def atualizar_resumo(registros):
+    # Considera também os filtros digitados nas colunas.
+    if registros is None:
+        registros = sd.to_dict('records')
+
+    total = len(registros)
+    chegadas = sum(
+        registro.get('C/P') == 'Chegadas'
+        for registro in registros
+    )
+    partidas = sum(
+        registro.get('C/P') == 'Partidas'
+        for registro in registros
+    )
+
+    if total == 0:
+        return 'Nenhum voo encontrado para os filtros selecionados.'
+
+    return (
+        f'{total} voos encontrados | '
+        f'{chegadas} chegadas | {partidas} partidas'
+    )
+
+
+if __name__ == '__main__':
+    app.run()
     
 
